@@ -28,8 +28,8 @@ import com.cde.fse.security.service.UserDetailsServiceImpl;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-private final static Logger log = LoggerFactory.getLogger(AuthController.class);
-	
+	private final static Logger log = LoggerFactory.getLogger(AuthController.class);
+
 	@Autowired
 	AuthenticationManager authenticationManager;
 
@@ -44,26 +44,27 @@ private final static Logger log = LoggerFactory.getLogger(AuthController.class);
 
 	@Autowired
 	JwtUtils jwtUtils;
-	
+
 	@Autowired
 	UserDetailsServiceImpl userDetailsServiceImpl;
-	
+
 	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest authenticationRequest) throws Exception {
-        log.info("Start createAuthenticationToken:: JwtAuthenticationController");
-        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-        final UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(authenticationRequest.getUsername());
-        final String token = jwtUtils.generateJwtToken(userDetails.getUsername());
-        return ResponseEntity.ok(new MessageResponse(token));
-    }
-	
-    private void authenticate(String username, String password) throws Exception {
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
-        } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS" + e + " user: " + username + " pwd: " + password);
-        }
-    }
+	public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest authenticationRequest)
+			throws Exception {
+		log.info("Start createAuthenticationToken:: JwtAuthenticationController");
+		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+		final UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(authenticationRequest.getUsername());
+		final String token = jwtUtils.generateJwtToken(userDetails.getUsername());
+		return ResponseEntity.ok(new MessageResponse(token));
+	}
+
+	private void authenticate(String username, String password) throws Exception {
+		try {
+			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+		} catch (DisabledException e) {
+			throw new Exception("USER_DISABLED", e);
+		} catch (BadCredentialsException e) {
+			throw new Exception("INVALID_CREDENTIALS" + e + " user: " + username + " pwd: " + password);
+		}
+	}
 }

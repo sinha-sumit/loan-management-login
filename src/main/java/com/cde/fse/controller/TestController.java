@@ -2,6 +2,8 @@ package com.cde.fse.controller;
 
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.core.ParameterizedTypeReference;
@@ -21,17 +23,10 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 @EnableHystrix
 public class TestController {
 	
+	private static final Logger log = LoggerFactory.getLogger(TestController.class);
+	
 	@Autowired
     RestTemplate restTemplate;
-	
-	/*
-	 * @RequestMapping(value = "/")
-	 * 
-	 * @HystrixCommand(fallbackMethod = "fallback_hello", commandProperties = {
-	 * 
-	 * @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds",
-	 * value = "1000") })
-	 */
 	
 	@GetMapping("/all")
 	public String allAccess() {
@@ -54,7 +49,7 @@ public class TestController {
 	@HystrixCommand(fallbackMethod = "callLoanManagementLoginApi_Fallback")
     public String callLoanManagementLoginApi(String username) {
  
-        System.out.println("Getting Login details for " + username);
+		log.info("Getting Login details for " + username);
  
         String response = restTemplate
                 .exchange("http://localhost:8091/api/test/all"
@@ -63,7 +58,7 @@ public class TestController {
                 , new ParameterizedTypeReference<String>() {
             }, username).getBody();
  
-        System.out.println("Response Received as " + response + " -  " + new Date());
+        log.info("Response Received as " + response + " -  " + new Date());
  
         return "NORMAL FLOW !!! - User Name -  " + username + " :::  " +
                     " Login Details " + response + " -  " + new Date();

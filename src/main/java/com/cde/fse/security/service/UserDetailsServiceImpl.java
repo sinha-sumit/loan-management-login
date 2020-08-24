@@ -31,6 +31,5 @@ private final static Logger log = LoggerFactory.getLogger(UserDetailsServiceImpl
 				.orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
 		
 		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), new ArrayList<>());
-		//return UserDetailsImpl.build(user);
 	}
 }
