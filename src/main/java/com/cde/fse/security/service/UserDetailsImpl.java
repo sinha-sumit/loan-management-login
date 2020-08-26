@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.cde.fse.model.User;
+import com.cde.fse.model.Users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class UserDetailsImpl implements UserDetails {
@@ -22,18 +23,21 @@ public class UserDetailsImpl implements UserDetails {
 
 	@JsonIgnore
 	private String password;
+	
+	private String role;
 
 	private Collection<? extends GrantedAuthority> authorities;
 	
-	public UserDetailsImpl(Long id, String username, String password,
+	public UserDetailsImpl(Long id, String username, String password, String role,
 			Collection<? extends GrantedAuthority> authorities) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
+		this.role = role;
 		this.authorities = authorities;
 	}
 	
-	public static UserDetailsImpl build(User user) {
+	public static UserDetailsImpl build(Users user) {
 		List<GrantedAuthority> authorities = user.getRoles().stream()
 				.map(role -> new SimpleGrantedAuthority(role.getName().name()))
 				.collect(Collectors.toList());
@@ -41,7 +45,8 @@ public class UserDetailsImpl implements UserDetails {
 		return new UserDetailsImpl(
 				user.getId(), 
 				user.getUsername(), 
-				user.getPassword(), 
+				user.getPassword(),
+				user.getRole(),
 				authorities);
 	}
 	
@@ -63,6 +68,14 @@ public class UserDetailsImpl implements UserDetails {
 	@Override
 	public String getUsername() {
 		return username;
+	}
+	
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 	@Override
